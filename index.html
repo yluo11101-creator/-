@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智游澳门 | 智能一日游套餐推荐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav a {
+            color: #b21f1f;
+            text-decoration: none;
+            margin: 0 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #1a2a6c;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .package-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .package {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 350px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .package:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .package.active {
+            border: 3px solid #b21f1f;
+            box-shadow: 0 0 20px rgba(178, 31, 31, 0.4);
+        }
+
+        .package-image-container {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .package-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .package:hover .package-image {
+            transform: scale(1.05);
+        }
+
+        .package-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #1a2a6c, #b21f1f);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .package-image-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .package-image-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .package-content {
+            padding: 25px;
+        }
+
+        .package h2 {
+            color: #b21f1f;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .package p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .package-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .package-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .package-features li::before {
+            content: '✓ ';
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #b21f1f, #fdbb2d);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(178, 31, 31, 0.4);
+        }
+
+        .itinerary {
+            background: white;
+            padding: 60px 20px;
+            margin: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .itinerary h2 {
+            text-align: center;
+            color: #b21f1f;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+        }
+
+        .package-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .package-tab {
+            padding: 12px 25px;
+            background: #f5f5f5;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .package-tab.active {
+            background: linear-gradient(45deg, #b21f1f, #fdbb2d);
+            color: white;
+        }
+
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            display: none;
+        }
+
+        .timeline.active {
+            display: block;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #b21f1f;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .timeline-time {
+            position: absolute;
+            top: 20px;
+            width: 100px;
+            text-align: center;
+            font-weight: bold;
+            color: #b21f1f;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-time {
+            right: calc(50% + 20px);
+        }
+
+        .timeline-item:nth-child(even) .timeline-time {
+            left: calc(50% + 20px);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: #b21f1f;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .contact-section {
+            background: white;
+            padding: 60px 20px;
+            margin: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .contact-section h2 {
+            text-align: center;
+            color: #b21f1f;
+            margin-bottom: 40px;
+            font-size: 2.2rem;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #b21f1f;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #b21f1f;
+            outline: none;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        footer {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .contact-info {
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            nav a {
+                margin: 0 15px;
+                font-size: 1rem;
+            }
+            
+            .package {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .package-container {
+                margin: 20px 10px;
+                padding: 30px 15px;
+            }
+            
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                flex-direction: row !important;
+            }
+            
+            .timeline-time {
+                position: static;
+                width: auto;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+            
+            .timeline-marker {
+                left: 20px;
+            }
+            
+            .timeline-content {
+                margin-left: 40px;
+            }
+            
+            .package-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .package-tab {
+                width: 80%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🎰 智游澳门 · 智能一日游</h1>
+            <p>探索东西方文化交融之美 | AI定制您的完美澳门之旅</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <a href="#home">首页</a>
+            <a href="#packages">精选套餐</a>
+            <a href="#itinerary">行程安排</a>
+            <a href="#contact">联系我们</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h2>澳门一日游，智能伴您行</h2>
+            <p>AI行程规划 | 智能语音导览 | 实时翻译 | 个性化推荐</p>
+        </div>
+    </section>
+
+    <section class="package-container" id="packages">
+        <!-- 套餐1：文化遗产探索之旅 -->
+        <div class="package active" data-package="heritage">
+            <div class="package-image-container">
+                <div class="package-image-loading" id="loading1">图片加载中...</div>
+                <img src="https://pic.rmb.bdstatic.com/bjh/3f195ad4d26/240531/de6c7f6ed8803740d525e6420bb1c7a7.jpeg" 
+                     alt="澳门文化遗产探索之旅" class="package-image" 
+                     onload="hideLoading('loading1')"
+                     onerror="showPlaceholder(this, 'loading1', '文化遗产探索')">
+            </div>
+            <div class="package-content">
+                <h2>🏛️ 文化遗产探索之旅</h2>
+                <p>深度体验澳门世界文化遗产，感受东西方文化交融的独特魅力</p>
+                <ul class="package-features">
+                    <li>AI智能路线规划</li>
+                    <li>AR历史场景重现</li>
+                    <li>多语言实时翻译</li>
+                    <li>专业文化讲解</li>
+                    <li>特色美食推荐</li>
+                </ul>
+                <div class="package-price">¥688 起</div>
+                <a href="#book" class="btn">立即预订</a>
+            </div>
+        </div>
+
+        <!-- 套餐2：美食购物娱乐行 -->
+        <div class="package" data-package="shopping">
+            <div class="package-image-container">
+                <div class="package-image-loading" id="loading2">图片加载中...</div>
+                <img src="https://p1.itc.cn/q_70/images03/20221102/f46a546655fb48acb1dc31a8527d34da.jpeg" 
+                     alt="澳门美食购物娱乐行" class="package-image"
+                     onload="hideLoading('loading2')"
+                     onerror="showPlaceholder(this, 'loading2', '美食购物娱乐')">
+            </div>
+            <div class="package-content">
+                <h2>🛍️ 美食购物娱乐行</h2>
+                <p>品味地道葡式美食，畅享免税购物，体验世界级娱乐设施</p>
+                <ul class="package-features">
+                    <li>智能餐厅预订</li>
+                    <li>优惠信息推送</li>
+                    <li>购物路线优化</li>
+                    <li>娱乐项目推荐</li>
+                    <li>私人购物助理</li>
+                </ul>
+                <div class="package-price">¥888 起</div>
+                <a href="#book" class="btn">立即预订</a>
+            </div>
+        </div>
+
+        <!-- 套餐3：家庭亲子欢乐游 -->
+        <div class="package" data-package="family">
+            <div class="package-image-container">
+                <div class="package-image-loading" id="loading3">图片加载中...</div>
+                <img src="https://img2.baidu.com/it/u=3489637673,1119514483&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1067" 
+                     alt="澳门家庭亲子欢乐游" class="package-image"
+                     onload="hideLoading('loading3')"
+                     onerror="showPlaceholder(this, 'loading3', '家庭亲子欢乐')">
+            </div>
+            <div class="package-content">
+                <h2>👨‍👩‍👧‍👦 家庭亲子欢乐游</h2>
+                <p>专为家庭设计的亲子行程，寓教于乐，创造美好家庭回忆</p>
+                <ul class="package-features">
+                    <li>儿童友好路线</li>
+                    <li>互动学习体验</li>
+                    <li>安全监控服务</li>
+                    <li>亲子活动安排</li>
+                    <li>紧急医疗支持</li>
+                </ul>
+                <div class="package-price">¥988 起</div>
+                <a href="#book" class="btn">立即预订</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="itinerary" id="itinerary">
+        <div class="container">
+            <h2>📅 澳门一日游经典行程</h2>
+            
+            <div class="package-selector">
+                <div class="package-tab active" data-tab="heritage">文化遗产探索之旅</div>
+                <div class="package-tab" data-tab="shopping">美食购物娱乐行</div>
+                <div class="package-tab" data-tab="family">家庭亲子欢乐游</div>
+            </div>
+
+            <!-- 文化遗产探索之旅行程 -->
+            <div class="timeline active" id="heritage-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">08:30 AM</div>
+                    <div class="timeline-content">
+                        <h3>大三巴牌坊</h3>
+                        <p>参观澳门最具代表性的历史遗迹，了解圣保禄学院的历史背景</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">10:00 AM</div>
+                    <div class="timeline-content">
+                        <h3>澳门博物馆 & 大炮台</h3>
+                        <p>深入了解澳门历史文化，从大炮台俯瞰澳门全景</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">12:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>议事亭前地 & 民政总署大楼</h3>
+                        <p>欣赏葡式建筑风格，感受澳门历史中心区的独特魅力</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">14:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>郑家大屋 & 妈阁庙</h3>
+                        <p>参观中国传统建筑与妈祖文化圣地，感受中西文化交融</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">16:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>岗顶剧院 & 圣若瑟修院</h3>
+                        <p>欣赏新古典主义建筑，了解澳门在东西方文化交流中的角色</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">18:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>葡国餐厅晚餐</h3>
+                        <p>在历史悠久的葡国餐厅享用正宗葡式美食，结束文化探索之旅</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 美食购物娱乐行行程 -->
+            <div class="timeline" id="shopping-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">09:00 AM</div>
+                    <div class="timeline-content">
+                        <h3>威尼斯人度假村</h3>
+                        <p>体验威尼斯水城风情，在大运河购物中心开启购物之旅</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">11:00 AM</div>
+                    <div class="timeline-content">
+                        <h3>新濠天地 & 永利皇宫</h3>
+                        <p>欣赏奢华娱乐设施，体验世界级购物环境</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">13:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>官也街美食探索</h3>
+                        <p>品尝澳门特色小吃，购买手信，感受地道澳门生活气息</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">15:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>澳门塔观光</h3>
+                        <p>登上澳门标志性建筑，俯瞰澳门全景，体验刺激项目（可选）</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">17:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>葡京 & 新葡京娱乐场</h3>
+                        <p>体验澳门博彩文化，欣赏独特建筑风格</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">19:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>米其林餐厅晚餐</h3>
+                        <p>在星级餐厅享用精致晚餐，结束美食购物之旅</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 家庭亲子欢乐游行程 -->
+            <div class="timeline" id="family-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">09:00 AM</div>
+                    <div class="timeline-content">
+                        <h3>澳门科学馆</h3>
+                        <p>体验互动科学展览，激发孩子对科学的兴趣</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">11:00 AM</div>
+                    <div class="timeline-content">
+                        <h3>澳门熊猫馆</h3>
+                        <p>观赏国宝大熊猫，了解动物保护知识</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">13:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>亲子餐厅午餐</h3>
+                        <p>在儿童友好餐厅享用午餐，提供儿童专属菜单</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">15:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>澳门大赛车博物馆</h3>
+                        <p>了解澳门格兰披治大赛车历史，体验模拟驾驶</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">17:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>澳门旅游塔儿童乐园</h3>
+                        <p>在安全环境中玩耍，家长可同时欣赏澳门全景</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-time">19:00 PM</div>
+                    <div class="timeline-content">
+                        <h3>家庭晚餐 & 返程</h3>
+                        <p>在轻松愉快的氛围中享用晚餐，结束愉快的家庭之旅</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2>📧 联系我们</h2>
+            <div class="contact-form">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" placeholder="请输入您的姓名">
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" placeholder="请输入您的邮箱">
+                </div>
+                <div class="form-group">
+                    <label for="phone">电话</label>
+                    <input type="tel" id="phone" placeholder="请输入您的电话">
+                </div>
+                <div class="form-group">
+                    <label for="package">感兴趣的套餐</label>
+                    <select id="package">
+                        <option value="">请选择套餐</option>
+                        <option value="heritage">文化遗产探索之旅</option>
+                        <option value="shopping">美食购物娱乐行</option>
+                        <option value="family">家庭亲子欢乐游</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">计划出行日期</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="form-group">
+                    <label for="message">特殊需求或问题</label>
+                    <textarea id="message" placeholder="请告诉我们您的特殊需求或问题"></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">提交咨询</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="contact-info">
+                <h3>智游澳门 · 智能旅游</h3>
+                <p>📧 macao@smarttravel.com</p>
+                <p>📞 400-888-9999</p>
+                <p>📍 澳门特别行政区澳门半岛旅游大厦</p>
+            </div>
+            <div class="social-links">
+                <a href="#">微信</a> | 
+                <a href="#">微博</a> | 
+                <a href="#">抖音</a>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8;">&copy; 2024 智游澳门智能旅游. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 图片加载处理函数
+        function hideLoading(loadingId) {
+            const loadingElement = document.getElementById(loadingId);
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        function showPlaceholder(imgElement, loadingId, packageType) {
+            // 隐藏加载提示
+            hideLoading(loadingId);
+            
+            // 创建占位符
+            const placeholder = document.createElement('div');
+            placeholder.className = 'package-image-placeholder';
+            placeholder.innerHTML = `
+                <i>🏛️</i>
+                <div>${packageType}之旅</div>
+            `;
+            
+            // 替换图片
+            imgElement.style.display = 'none';
+            imgElement.parentNode.appendChild(placeholder);
+        }
+        
+        // 套餐选择交互
+        document.addEventListener('DOMContentLoaded', function() {
+            // 套餐卡片点击事件
+            const packages = document.querySelectorAll('.package');
+            const packageTabs = document.querySelectorAll('.package-tab');
+            const timelines = document.querySelectorAll('.timeline');
+            
+            // 初始化 - 显示第一个套餐的行程
+            showTimeline('heritage');
+            
+            // 套餐卡片点击事件
+            packages.forEach(pkg => {
+                pkg.addEventListener('click', function() {
+                    const packageType = this.getAttribute('data-package');
+                    
+                    // 更新套餐卡片状态
+                    packages.forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新套餐标签状态
+                    packageTabs.forEach(tab => tab.classList.remove('active'));
+                    document.querySelector(`.package-tab[data-tab="${packageType}"]`).classList.add('active');
+                    
+                    // 显示对应行程
+                    showTimeline(packageType);
+                });
+            });
+            
+            // 套餐标签点击事件
+            packageTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const packageType = this.getAttribute('data-tab');
+                    
+                    // 更新套餐标签状态
+                    packageTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新套餐卡片状态
+                    packages.forEach(p => p.classList.remove('active'));
+                    document.querySelector(`.package[data-package="${packageType}"]`).classList.add('active');
+                    
+                    // 显示对应行程
+                    showTimeline(packageType);
+                });
+            });
+            
+            // 显示对应行程的函数
+            function showTimeline(packageType) {
+                timelines.forEach(timeline => {
+                    timeline.classList.remove('active');
+                });
+                document.getElementById(`${packageType}-timeline`).classList.add('active');
+            }
+            
+            // 简单的表单提交交互
+            const form = document.querySelector('.contact-form');
+            const submitBtn = form.querySelector('.btn');
+            
+            submitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                
+                if (!name || !email) {
+                    alert('请填写姓名和邮箱信息！');
+                    return;
+                }
+                
+                alert('感谢您的咨询！我们会尽快与您联系，为您定制完美的澳门一日游行程。');
+                form.reset();
+            });
+            
+            // 设置日期选择器的最小日期为今天
+            const dateInput = document.getElementById('date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+        });
+    </script>
+</body>
+</html>
